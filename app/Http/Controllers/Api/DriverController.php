@@ -51,10 +51,16 @@ class DriverController extends Controller
 
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('role', 'driver')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Driver not found',
+            ], 404);
+        }
 
         return response()->json([
-            'message' => 'driver retrieved successfully',
+            'message' => 'Driver retrieved successfully',
             'driver'  => $user->only(['id', 'name', 'phone']),
         ]);
     }
@@ -84,13 +90,21 @@ class DriverController extends Controller
 
 
 
+
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        $user = User::where('role', 'driver')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Driver not found',
+            ], 404);
+        }
+
+            $user->delete();
 
         return response()->json([
-            'message' => 'driver deleted successfully',
+            'message' => 'Driver deleted successfully',
         ]);
     }
 }
