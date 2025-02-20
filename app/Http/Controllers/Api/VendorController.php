@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Vendor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,11 +18,11 @@ class VendorController extends Controller
 
     public function index()
     {
-        $vendors = Vendor::select('id', 'name', 'phone')->get();
+        $users = User::select('id', 'name', 'phone')->where('role','vendor')->get();
 
         return response()->json([
             'message' => 'Vendors retrieved successfully',
-            'data'    => $vendors,
+            'data'    => $users,
         ]);
     }
 
@@ -34,7 +34,7 @@ class VendorController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $vendor = Vendor::create([
+        $user = User::create([
             'name'     => $validated['name'],
             'phone'    => $validated['phone'],
             'password' => Hash::make($validated['password']),
@@ -43,23 +43,23 @@ class VendorController extends Controller
 
         return response()->json([
             'message' => 'Vendor created successfully',
-            'vendor'  => $vendor->only(['id', 'name', 'phone']),
+            'vendor'  => $user->only(['id', 'name', 'phone']),
         ], 201);
     }
 
 
-    public function show(Vendor $vendor)
+    public function show(User $user)
     {
         return response()->json([
-            'message' => 'Vendor retrieved successfully',
-            'vendor'  => $vendor->only(['id', 'name', 'phone']),
+            'message' => 'User retrieved successfully',
+            'vendor'  => $user->only(['id', 'name', 'phone']),
         ]);
     }
 
     public function update(Request $request, $id)
     {
 
-        $vendor = Vendor::findOrFail($id);
+        $user = User::findOrFail($id);
 
         $validated = $request->validate([
             'name'     => 'sometimes|string|max:255',
@@ -71,19 +71,19 @@ class VendorController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        $vendor->update($validated);
+        $user->update($validated);
 
         return response()->json([
             'message' => 'Vendor updated successfully',
-            'vendor'  => $vendor->only(['id', 'name', 'phone']),
+            'vendor'  => $user->only(['id', 'name', 'phone']),
         ]);
     }
 
 
 
-    public function destroy(Vendor $vendor)
+    public function destroy(User $user)
     {
-        $vendor->delete();
+        $user->delete();
 
         return response()->json([
             'message' => 'Vendor deleted successfully',

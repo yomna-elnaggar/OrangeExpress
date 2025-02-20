@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Driver;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,11 +19,11 @@ class DriverController extends Controller
 
     public function index()
     {
-        $drivers = Driver::select('id', 'name', 'phone')->get();
+        $users = User::select('id', 'name', 'phone')->where('role','driver')->get();
 
         return response()->json([
             'message' => 'Drivers retrieved successfully',
-            'data'    => $drivers,
+            'data'    => $users,
         ]);
     }
 
@@ -35,7 +35,7 @@ class DriverController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $driver = Driver::create([
+        $user = User::create([
             'name'     => $validated['name'],
             'phone'    => $validated['phone'],
             'password' => Hash::make($validated['password']),
@@ -43,24 +43,24 @@ class DriverController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Driver created successfully',
-            'driver'  => $driver->only(['id', 'name', 'phone']),
+            'message' => 'driver created successfully',
+            'driver'  => $user->only(['id', 'name', 'phone']),
         ], 201);
     }
 
 
-    public function show(Driver $driver)
+    public function show(User $user)
     {
         return response()->json([
             'message' => 'driver retrieved successfully',
-            'driver'  => $driver->only(['id', 'name', 'phone']),
+            'driver'  => $user->only(['id', 'name', 'phone']),
         ]);
     }
 
     public function update(Request $request, $id)
     {
 
-        $driver = Driver::findOrFail($id);
+        $user = User::findOrFail($id);
 
         $validated = $request->validate([
             'name'     => 'sometimes|string|max:255',
@@ -72,22 +72,22 @@ class DriverController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        $driver->update($validated);
+        $user->update($validated);
 
         return response()->json([
-            'message' => 'Driver updated successfully',
-            'driver'  => $driver->only(['id', 'name', 'phone']),
+            'message' => 'driver updated successfully',
+            'driver'  => $user->only(['id', 'name', 'phone']),
         ]);
     }
 
 
 
-    public function destroy(Driver $driver)
+    public function destroy(User $user)
     {
-        $driver->delete();
+        $user->delete();
 
         return response()->json([
-            'message' => 'Driver deleted successfully',
+            'message' => 'driver deleted successfully',
         ]);
     }
 }
