@@ -30,8 +30,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // });
 
-// Route::middleware(['auth:sanctum', 'role:contractor'])->group(function () {
-//     Route::get('/contractor/tasks', [ContractorController::class, 'tasks']);
+// Route::middleware(['auth:sanctum', 'role:vendor'])->group(function () {
+//     Route::get('/vendor/tasks', [ContractorController::class, 'tasks']);
 
 // });
 
