@@ -25,10 +25,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-// Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
-//     Route::get('/manager/dashboard', [ManagerController::class, 'dashboard']);
+Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
+    Route::resource('vendors', 'VendorController');
+    Route::resource('drivers', 'DriverController');
 
-// });
+});
 
 // Route::middleware(['auth:sanctum', 'role:vendor'])->group(function () {
 //     Route::get('/vendor/tasks', [ContractorController::class, 'tasks']);
