@@ -49,8 +49,10 @@ class DriverController extends Controller
     }
 
 
-    public function show(User $user)
+    public function show($id)
     {
+        $user = User::findOrFail($id);
+
         return response()->json([
             'message' => 'driver retrieved successfully',
             'driver'  => $user->only(['id', 'name', 'phone']),
@@ -82,8 +84,9 @@ class DriverController extends Controller
 
 
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::findOrFail($id);
         $user->delete();
 
         return response()->json([

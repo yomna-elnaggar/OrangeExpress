@@ -48,12 +48,16 @@ class VendorController extends Controller
     }
 
 
-    public function show(User $user)
+    public function show($id)
     {
+        $user = User::findOrFail($id);
+
         return response()->json([
-            'message' => 'User retrieved successfully',
+            'message' => 'Vendor retrieved successfully',
             'vendor'  => $user->only(['id', 'name', 'phone']),
         ]);
+
+
     }
 
     public function update(Request $request, $id)
@@ -81,8 +85,9 @@ class VendorController extends Controller
 
 
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::findOrFail($id);
         $user->delete();
 
         return response()->json([
