@@ -16,13 +16,33 @@ class VendorController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::select('id', 'name', 'phone')->where('role','vendor')->get();
+        $perPage = $request->input('perPage', 10);
+        $page = $request->input('page', 1);
+        $search = $request->input('search');
+
+        $users = User::select('id', 'name', 'phone')
+            ->where('role', 'vendor')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('phone', 'LIKE', "%{$search}%");
+                });
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return response()->json([
+            'code' => 200,
+            'status' => true,
+            'data' => $users,
+            'pagination' => [
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
+            ],
             'message' => 'Vendors retrieved successfully',
-            'data'    => $users,
         ]);
     }
 
