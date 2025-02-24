@@ -28,7 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(['auth:sanctum', 'role:manager'])->group(function () {
     Route::resource('vendors', 'VendorController');
     Route::resource('drivers', 'DriverController');
+    Route::get('/invoice/detaile', 'InvoiceController@invoicesDetails');
     Route::resource('invoices', 'InvoiceController');
+
 
 });
 

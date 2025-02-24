@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\InvoicDetailseResource;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
@@ -174,6 +175,44 @@ class InvoiceController extends Controller
             'message' => 'Invoice deleted successfully',
         ]);
     }
+
+    public function invoicesDetails(Request $request)
+    {
+        
+        $perPage = $request->input('perPage', 10);
+        $page = $request->input('page', 1);
+        $search = $request->input('search');
+
+        $invoices = Invoice::with(['vendor', 'driver'])
+            ->when($search, function ($q) use ($search) {
+                $q->whereHas('vendor', function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('phone', 'LIKE', "%{$search}%");
+                });
+            })
+            ->when($request->status, function ($q) use ($request) {
+                $q->where('status', $request->status);
+            })
+            ->when($request->date, function ($q) use ($request) {
+                $q->where('date', '>=', $request->date);
+            })
+            ->latest()
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'code' => 200,
+            'status' => true,
+            'data' => InvoicDetailseResource::collection($invoices) ,
+            'pagination' => [
+                'current_page' => $invoices->currentPage(),
+                'last_page' => $invoices->lastPage(),
+                'per_page' => $invoices->perPage(),
+                'total' => $invoices->total(),
+            ],
+            'message' => 'Invoices retrieved successfully',
+        ]);
+    }
+
 
 }
 
